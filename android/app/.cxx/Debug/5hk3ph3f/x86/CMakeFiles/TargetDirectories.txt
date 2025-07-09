@@ -1,0 +1,2 @@
+D:/Projects/msrtc_demo/android/app/.cxx/Debug/5hk3ph3f/x86/CMakeFiles/edit_cache.dir
+D:/Projects/msrtc_demo/android/app/.cxx/Debug/5hk3ph3f/x86/CMakeFiles/rebuild_cache.dir
