@@ -1,399 +1,175 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
+import 'package:msrtc_demo/domain/entities/trip.dart';
+import 'package:msrtc_demo/domain/usecases/get_routes.dart';
+import 'package:msrtc_demo/domain/usecases/get_stops_for_route.dart';
 import 'package:msrtc_demo/issueticket.dart';
 
 class SelectTrip extends StatefulWidget {
-  const SelectTrip({super.key});
+  final GetRoutes getRoutes;
+  final GetStopsForRoute getStopsForRoute;
+
+  const SelectTrip({
+    super.key,
+    required this.getRoutes,
+    required this.getStopsForRoute,
+  });
 
   @override
   State<SelectTrip> createState() => _SelectTripState();
 }
 
 class _SelectTripState extends State<SelectTrip> {
-  String routeNo = "";
+  late final List<Trip> trips;
+
+  @override
+  void initState() {
+    super.initState();
+    trips = widget.getRoutes();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-          preferredSize: Size.fromHeight(50.0),
-          child: AppBar(
-            foregroundColor: Colors.white,
-            backgroundColor: Colors.red,
-            title: const Text(
-              "SELECT TRIP",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-          )),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                routeNo = "63328";
-              });
-            },
-            child: Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (_) => IssueTicket(
-                                routeNo: "63328",
-                              )));
-                },
-                child: DottedBorder(
-                    color: Colors.red,
-                    // gap: 3,
-                    strokeWidth: 1,
-                    child: const Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text("Sr No : 1"),
-                            Text(
-                              "STARTED",
-                              style: TextStyle(color: Colors.red),
-                            )
-                          ],
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                              children: [
-                                Text(
-                                  "From Stop :-",
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Text("Shrivardhan"),
-                              ],
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "To Stop :-",
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Text(
-                                  "Swargate, Pune",
-                                  style: TextStyle(color: Colors.black),
-                                )
-                              ],
-                            )
-                          ],
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                              children: [
-                                Text(
-                                  "Trip No :-",
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Text("3413867"),
-                              ],
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Route No :-",
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Text(
-                                  "63328",
-                                  style: TextStyle(color: Colors.black),
-                                )
-                              ],
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                              children: [
-                                Text(
-                                  "Trip Dept Date :-",
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Text("2024-06-18"),
-                              ],
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Trip Dept Time :-",
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Text(
-                                  "05:00:00",
-                                  style: TextStyle(color: Colors.black),
-                                )
-                              ],
-                            )
-                          ],
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                              children: [
-                                Text(
-                                  "Trip Bus Service No :-",
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Text("S25130"),
-                              ],
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Bus Type :-",
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Text(
-                                  "ORDINARY",
-                                  style: TextStyle(color: Colors.black),
-                                )
-                              ],
-                            )
-                          ],
-                        ),
-                      ],
-                    )),
-              ),
-            ),
+        preferredSize: const Size.fromHeight(50.0),
+        child: AppBar(
+          foregroundColor: Colors.white,
+          backgroundColor: Colors.red,
+          title: const Text(
+            'SELECT TRIP',
+            style: TextStyle(fontWeight: FontWeight.bold),
           ),
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                routeNo = "63329";
-              });
-            },
-            child: Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (_) => IssueTicket(
-                                routeNo: "63329",
-                              )));
-                },
-                child: DottedBorder(
-                    color: Colors.red,
-                    // gap: 3,
-                    strokeWidth: 1,
-                    child: const Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text("Sr No : 2"),
-                            Text(
-                              "STARTED",
-                              style: TextStyle(color: Colors.red),
-                            )
-                          ],
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                              children: [
-                                Text(
-                                  "From Stop :-",
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Text("Shrivardhan"),
-                              ],
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "To Stop :-",
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Text(
-                                  "Mumbai Central",
-                                  style: TextStyle(color: Colors.black),
-                                )
-                              ],
-                            )
-                          ],
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                              children: [
-                                Text(
-                                  "Trip No :-",
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Text("3413868"),
-                              ],
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Route No :-",
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Text(
-                                  "63329",
-                                  style: TextStyle(color: Colors.black),
-                                )
-                              ],
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                              children: [
-                                Text(
-                                  "Trip Dept Date :-",
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Text("2024-06-18"),
-                              ],
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Trip Dept Time :-",
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Text(
-                                  "05:00:00",
-                                  style: TextStyle(color: Colors.black),
-                                )
-                              ],
-                            )
-                          ],
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                              children: [
-                                Text(
-                                  "Trip Bus Service No :-",
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Text("S25131"),
-                              ],
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Bus Type :-",
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Text(
-                                  "ORDINARY",
-                                  style: TextStyle(color: Colors.black),
-                                )
-                              ],
-                            )
-                          ],
-                        ),
-                      ],
-                    )),
+        ),
+      ),
+      body: ListView.builder(
+        padding: const EdgeInsets.all(16.0),
+        itemCount: trips.length,
+        itemBuilder: (context, index) {
+          final trip = trips[index];
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 12.0),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => IssueTicket(
+                      routeNo: trip.routeNo,
+                      getStopsForRoute: widget.getStopsForRoute,
+                    ),
+                  ),
+                );
+              },
+              child: DottedBorder(
+                color: Colors.red,
+                strokeWidth: 1,
+                borderType: BorderType.RRect,
+                radius: const Radius.circular(10),
+                child: Padding(
+                  padding: const EdgeInsets.all(14.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('Sr No : ${index + 1}'),
+                          Text(
+                            trip.status,
+                            style: const TextStyle(color: Colors.red),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text('From Stop :-', style: TextStyle(fontWeight: FontWeight.bold)),
+                          Text(trip.fromStop, style: const TextStyle(color: Colors.black)),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text('To Stop :-', style: TextStyle(fontWeight: FontWeight.bold)),
+                          Text(trip.toStop, style: const TextStyle(color: Colors.black)),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text('Trip No :-', style: TextStyle(fontWeight: FontWeight.bold)),
+                              const SizedBox(height: 5),
+                              Text(trip.tripNo),
+                            ],
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text('Route No :-', style: TextStyle(fontWeight: FontWeight.bold)),
+                              const SizedBox(height: 5),
+                              Text(trip.routeNo, style: const TextStyle(color: Colors.black)),
+                            ],
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text('Trip Dept Date :-', style: TextStyle(fontWeight: FontWeight.bold)),
+                              const SizedBox(height: 5),
+                              Text(trip.departureDate),
+                            ],
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text('Trip Dept Time :-', style: TextStyle(fontWeight: FontWeight.bold)),
+                              const SizedBox(height: 5),
+                              Text(trip.departureTime, style: const TextStyle(color: Colors.black)),
+                            ],
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text('Trip Bus Service No :-', style: TextStyle(fontWeight: FontWeight.bold)),
+                              const SizedBox(height: 5),
+                              Text(trip.serviceNo),
+                            ],
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text('Bus Type :-', style: TextStyle(fontWeight: FontWeight.bold)),
+                              const SizedBox(height: 5),
+                              Text(trip.busType, style: const TextStyle(color: Colors.black)),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
-          )
-        ],
+          );
+        },
       ),
     );
   }
